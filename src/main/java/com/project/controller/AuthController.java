@@ -2,6 +2,7 @@ package com.project.controller;
 
 import com.project.model.ApiResponse;
 import com.project.model.request.LoginFormRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/auth/v1/user")
+@RequestMapping(value = "/api/auth/v1/user", headers = {"key=value", "keys=value"})
 public class AuthController {
 
     List<LoginFormRequest> dataLst = new ArrayList<>(
@@ -52,10 +53,15 @@ public class AuthController {
     }
 
     @GetMapping("/{id}") /// Specify path variable in mapping
-    public ResponseEntity<?> getUserProfile(@PathVariable String id){
+    public ResponseEntity<?> getUserProfile(
+            @PathVariable String id,
+            HttpServletRequest request
+            ){
         Optional<LoginFormRequest> user = dataLst.stream()
                 .filter(u -> u.getId().toString().equals(id))
                 .findFirst();
+
+        System.out.println(request.getHeader("key"));
 
         if(user.isPresent()){
             return ResponseEntity.ok(new ApiResponse("Successfully", 200, user));
