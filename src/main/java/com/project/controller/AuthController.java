@@ -7,12 +7,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/auth/v1")
+@RequestMapping("/api/auth/v1/user")
 public class AuthController {
+
+    List<LoginFormRequest> dataLst = new ArrayList<>(
+            Arrays.asList(
+                    new LoginFormRequest(1L, "john_doe", "SecurePass123!"),
+                    new LoginFormRequest(2L, "alice_wonder", "WonderLand@2024"),
+                    new LoginFormRequest(3L, "michael_smith", "Smithy#456"),
+                    new LoginFormRequest(4L, "emily_rose", "EmilyR0se!"),
+                    new LoginFormRequest(5L, "david_clark", "D@vidC789"),
+                    new LoginFormRequest(6L, "sophia_lee", "LeeSophia2023*"),
+                    new LoginFormRequest(7L, "william_jones", "WilliamJ_99"),
+                    new LoginFormRequest(8L, "olivia_martin", "MartinOlivia##"),
+                    new LoginFormRequest(9L, "james_anderson", "J@mesAnd#321"),
+                    new LoginFormRequest(10L, "charlotte_white", "CWhite!654")
+            )
+    );
 
     @PostMapping(value = "/login", produces = "application/json", consumes = "application/json")
     public ResponseEntity<?> login(@Valid @RequestBody LoginFormRequest request) {
@@ -24,17 +40,6 @@ public class AuthController {
 
     @PostMapping(value = "/update", produces = "application/json", consumes = "application/json")
     public ResponseEntity<?> update(@RequestBody LoginFormRequest request) {
-        List<LoginFormRequest> dataLst = new ArrayList<>();
-        dataLst.add(new LoginFormRequest(1L, "user1", "password1"));
-        dataLst.add(new LoginFormRequest(2L, "user2", "password2"));
-        dataLst.add(new LoginFormRequest(3L, "user3", "password3"));
-        dataLst.add(new LoginFormRequest(4L, "user4", "password4"));
-        dataLst.add(new LoginFormRequest(5L, "user5", "password5"));
-        dataLst.add(new LoginFormRequest(6L, "user6", "password6"));
-        dataLst.add(new LoginFormRequest(7L, "user7", "password7"));
-        dataLst.add(new LoginFormRequest(8L, "user8", "password8"));
-        dataLst.add(new LoginFormRequest(9L, "user9", "password9"));
-        dataLst.add(new LoginFormRequest(10L, "user10", "password10"));
         Optional<LoginFormRequest> user = dataLst.stream()
                 .filter(u -> u.getId().equals(request.getId()))
                 .findFirst();
@@ -45,4 +50,18 @@ public class AuthController {
             return ResponseEntity.status(401).body(new ApiResponse("Invalid credentials", 401, null));
         }
     }
+
+    @GetMapping("/{id}") /// Specify path variable in mapping
+    public ResponseEntity<?> getUserProfile(@PathVariable String id){
+        Optional<LoginFormRequest> user = dataLst.stream()
+                .filter(u -> u.getId().toString().equals(id))
+                .findFirst();
+
+        if(user.isPresent()){
+            return ResponseEntity.ok(new ApiResponse("Successfully", 200, user));
+        } else {
+            return ResponseEntity.status(404).body(new ApiResponse("Invalid credentials", 404, user));
+        }
+    }
+
 }

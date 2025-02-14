@@ -1,13 +1,13 @@
 package com.project.model;
 
 public class ApiResponse {
-    private String message;
     private int status;
+    private String message;
     private Object data;
 
     public ApiResponse(String message, int status, Object data) {
-        this.message = message;
         this.status = status;
+        this.message = message;
         this.data = data;
     }
 
